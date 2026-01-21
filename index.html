@@ -708,7 +708,7 @@
             <div style="font-size:4rem; margin-bottom:15px;">🧠</div>
             <div style="font-size:1.4rem; color:var(--theme); font-weight:700; margin-bottom:5px;">
                 "ฝังข้อมูลลงสมองเรียบร้อย!"</div>
-            <div style="font-size:1rem; color:#888; margin-bottom:20px;">พระเจ้าไม่ทอดลูกเต๋ากับจักรวาล</div>
+            <div id="final-quote" style="font-size:1.2rem; color:#888; margin-bottom:20px; min-height: 1.5em;"></div>
             <div style="font-size:0.8rem; color:#555;">ดูทั้งหมด <span id="final-watched">0</span> ครั้ง | ทวนซ้ำ <span
                     id="final-repeat">0</span> ครั้ง</div>
         </div>
@@ -794,7 +794,7 @@
             original: [],
             total: 0,
             current: 0,
-            round: 3, // Force Round 3 to test reveal effect
+            round: 1,
             watched: 0,
             repeat: 0,
             viewDuration: 15000,
@@ -811,10 +811,6 @@
             watchHistory: [],
 
             async init() {
-                // Manually add specific test item
-                const testId = "dQw4w9WgXcQ"; // Placeholder ID
-                this.db[testId] = { raw: testId, desc: "พระเจ้าไม่ทอดลูกเต๋ากับจักรวาล", views: 2, totalWatchTime: 30000 };
-
                 try {
                     const r = await fetch('https://raw.githubusercontent.com/artnp/bigdata/refs/heads/main/reel1.js');
                     const t = await r.text();
@@ -829,17 +825,13 @@
                         });
                     }
                 } catch (e) { }
-
-                // Add test item to original list if not present
-                this.load(testId);
+                this.load();
             },
 
-            load(forcedId) {
+            load() {
                 const v = new URLSearchParams(location.search).get('v');
                 if (v) {
                     this.original = v.split(',').filter(x => x);
-                } else if (forcedId) {
-                    this.original = [forcedId];
                 }
 
                 this.queue = [...this.original];
@@ -958,9 +950,14 @@
 
                 const cap = document.getElementById('cap');
                 const txt = document.getElementById('txt');
+
+                // 🧹 RESET TEXT IMMEDIATELY
+                txt.innerHTML = '';
+                cap.classList.remove('show');
                 txt.style.fontFamily = 'Sarabun, sans-serif';
 
-                // 🎯 ROUND-BASED DISPLAY MODES (all use same caption box)
+                // 🎯 ROUND-BASED DISPLAY MODES
+                // Use a slight delay to allow UI to reset
                 setTimeout(() => {
                     if (this.round === 1) {
                         // Round 1: Normal display
@@ -971,7 +968,7 @@
                         txt.innerHTML = this.proc(info.desc, 0.4);
                         cap.classList.add('show');
                     } else {
-                        // Round 3+: Start with ALL words blurred, then reveal
+                        // Round 3+: ACTIVE RECALL - Start BLURRED then reveal
                         this.rapidSequentialRead(info.desc, txt, cap);
                     }
                 }, 300);
@@ -985,16 +982,20 @@
                 const words = text.split(' ');
                 const colors = ['#ff8787', '#ffc9c9', '#69db7c', '#74c0fc', '#da77f2'];
                 let revealedCount = 0;
-                const wordDuration = 450; // 450ms per word (slower reading)
+                const wordDuration = 450;
 
-                // STEP 1: Set ALL words to blurred first
+                // STEP 1: FORCE BLUR INITIAL STATE
+                // Create placeholders that are completely transparent/blurred
                 const allBlurred = words.map(word =>
-                    `<span style="color:transparent; text-shadow:0 0 6px rgba(255,255,255,0.5);">${word}</span>`
+                    `<span style="color:transparent; text-shadow:0 0 8px rgba(255,255,255,0.5); transition:all 0.3s;">${word}</span>`
                 ).join(' ');
+
                 txtEl.innerHTML = allBlurred;
 
-                // STEP 2: Show caption box (now has blurred content)
-                capEl.classList.add('show');
+                // Show box ONLY after setting content
+                requestAnimationFrame(() => {
+                    capEl.classList.add('show');
+                });
 
                 const renderWords = () => {
                     const html = words.map((word, i) => {
@@ -1004,13 +1005,13 @@
 
                         if (i < revealedCount) {
                             // Already revealed: VISIBLE with color (slightly faded for focus flow)
-                            return `<span style="color:${color}; text-shadow:0 0 10px ${color}60; opacity:0.9;">${bionic}</span>`;
+                            return `<span style="color:${color}; text-shadow:0 0 10px ${color}60; opacity:0.9; transition:all 0.5s;">${bionic}</span>`;
                         } else if (i === revealedCount) {
                             // Currently revealing: INNER VOICE POP!
                             return `<span style="display:inline-block; color:${color}; text-shadow:0 0 25px ${color}, 0 0 10px white; font-size:1.15em; animation: thoughtReveal 0.4s ease-out forwards;">${bionic}</span>`;
                         } else {
                             // Not yet revealed: BLURRED
-                            return `<span style="color:transparent; text-shadow:0 0 6px rgba(255,255,255,0.5);">${word}</span>`;
+                            return `<span style="color:transparent; text-shadow:0 0 8px rgba(255,255,255,0.5); pointer-events:none;">${word}</span>`;
                         }
                     }).join(' ');
 
@@ -1170,7 +1171,21 @@
                 document.getElementById('video').innerHTML = '';
                 document.getElementById('final-watched').textContent = this.watched;
                 document.getElementById('final-repeat').textContent = this.repeat;
-                document.getElementById('done').style.display = 'flex';
+
+                const doneEl = document.getElementById('done');
+                doneEl.style.display = 'flex';
+
+                // 🧠 FINAL REVELATION: Inner Voice Effect
+                const quoteEl = document.getElementById('final-quote');
+                const quoteText = "พระเจ้าไม่ทอดลูกเต๋ากับจักรวาล"; // Einstein's Quote
+
+                // Reuse existing logic, but manually pass the element
+                // We create a fake 'cap' object that mimics classList.add to satisfy the function
+                const fakeCap = { classList: { add: () => { } } };
+
+                // Start revealing
+                this.rapidSequentialRead(quoteText, quoteEl, fakeCap);
+
                 AudioEngine.stop();
             }
         };
