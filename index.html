@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NeuroRecall :: Military Grade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --theme: #69db7c;
+            /* Alpha */
+            --glow: rgba(105, 219, 124, 0.5);
+        }
+
+        /* 🌈 NEURO PHASING */
+        body.phase-1 {
+            --theme: #74c0fc;
+            --glow: rgba(116, 192, 252, 0.5);
+        }
+
+        body.phase-2 {
+            --theme: #da77f2;
+            --glow: rgba(218, 119, 242, 0.5);
+        }
+
+        body.phase-3 {
+            --theme: #ffd43b;
+            --glow: rgba(255, 212, 59, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #050508;
+            font-family: 'Sarabun', sans-serif;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            animation: body-breathe 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            transition: background 2s;
+            /* Background still fades smoothly */
+        }
+
+        @keyframes body-breathe {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.04);
+            }
+        }
+
+        .shorts {
+            position: relative;
+            width: 90vw;
+            max-width: 420px;
+            height: 92vh;
+            max-height: 800px;
+            background: #000;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* ☁️ DREAM IMPRINT (True Color, Blurred Edge) */
+        .shorts.imprint {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            max-width: none;
+            max-height: none;
+            z-index: 10000;
+            transform: none;
+            animation: none;
+
+            /* Softest Blurred Edges using Mask */
+            -webkit-mask-image: radial-gradient(ellipse at center, black 50%, transparent 95%);
+            mask-image: radial-gradient(ellipse at center, black 50%, transparent 95%);
+            background: #000;
+
+            /* Ensure Original Video Quality */
+            filter: none;
+            box-shadow: none;
+            border-radius: 0;
+            transition: none;
+        }
+
+        #video {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* DEEP FLOW LAYERS */
+        .tunnel-vision {
+            position: absolute;
+            inset: 0;
+            z-index: 50;
+            pointer-events: none;
+            background: radial-gradient(ellipse 70% 60% at 50% 45%,
+                    transparent 0%,
+                    transparent 40%,
+                    rgba(0, 0, 0, 0.3) 60%,
+                    rgba(0, 0, 0, 0.7) 80%,
+                    rgba(0, 0, 0, 0.95) 100%);
+        }
+
+        .heart-pulse {
+            position: absolute;
+            inset: 0;
+            border: 3px solid transparent;
+            border-radius: 24px;
+            z-index: 200;
+            pointer-events: none;
+            animation: heartbeat 1s infinite;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            70%,
+            100% {
+                border-color: transparent;
+            }
+
+            35% {
+                border-color: var(--glow);
+            }
+        }
+
+        /* UI OVERLAY */
+        .ui-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 100;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 25px;
+            padding-bottom: 120px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 35%);
+        }
+
+        /* 🙈 HIDE UI ON IMPRINT */
+        .shorts.imprint .ui-overlay,
+        .shorts.imprint .progress-wrap,
+        .shorts.imprint .status,
+        .shorts.imprint .sound-status,
+        .shorts.imprint .timeline,
+        .shorts.imprint .tunnel-vision,
+        .shorts.imprint .heart-pulse {
+            opacity: 0 !important;
+            transition: none !important;
+            /* Instant hide */
+        }
+
+        .caption {
+            background: rgba(10, 15, 25, 0.9);
+            border: 1px solid rgba(126, 184, 218, 0.2);
+            border-radius: 18px;
+            padding: 18px;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: 0.5s;
+        }
+
+        .caption.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .text {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* PROGRESS */
+        .progress-wrap {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 400;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--theme);
+            width: 0%;
+            transition: width 0.3s linear;
+            box-shadow: 0 0 10px var(--theme);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        .status {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            z-index: 400;
+            color: #888;
+        }
+
+        .sound-status {
+            position: absolute;
+            top: 70px;
+            left: 20px;
+            font-size: 1.2rem;
+            z-index: 410;
+            opacity: 0.5;
+            animation: sound-pulse 2s infinite;
+        }
+
+        @keyframes sound-pulse {
+
+            0%,
+            100% {
+                opacity: 0.3
+            }
+
+            50% {
+                opacity: 1
+            }
+        }
+
+
+        /* BREATH ANIMATIONS */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes expand {
+            from {
+                opacity: 0;
+                letter-spacing: 0;
+            }
+
+            to {
+                opacity: 1;
+                letter-spacing: 8px;
+            }
+        }
+
+        /* START */
+        #start {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .topic-list {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 20px;
+            border-radius: 14px;
+            border: 1px solid rgba(126, 184, 218, 0.3);
+            margin-bottom: 25px;
+            text-align: left;
+            max-height: 40vh;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .topic-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .topic-list li {
+            font-size: 0.75rem;
+            color: #aaa;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .topic-list li:last-child {
+            border: none;
+        }
+
+        .topic-count {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .go {
+            padding: 16px 60px;
+            background: linear-gradient(135deg, var(--theme), #40c057);
+            border: none;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0a1a0f;
+            cursor: pointer;
+            box-shadow: 0 10px 30px var(--glow);
+            transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
+        }
+
+        .go:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+            box-shadow: 0 15px 40px var(--glow);
+        }
+
+        /* SUBLIMINAL */
+        #flash {
+            position: absolute;
+            inset: 0;
+            background: #000;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .flash-w {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--theme);
+        }
+
+        /* VOID */
+        #void {
+            position: absolute;
+            inset: 0;
+            background: #000;
+            z-index: 1500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            /* ✂️ FRACTIONATION: NO TRANSITION (Sudden Cut) */
+            transition: none;
+        }
+
+        .void-t {
+            font-size: 1.4rem;
+            color: #444;
+            text-align: center;
+        }
+
+        /* DONE */
+        #done {
+            position: absolute;
+            inset: 0;
+            background: #000;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* TIMELINE */
+        .timeline {
+            position: absolute;
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            z-index: 10;
+        }
+
+        .t-icon {
+            font-size: 0.9rem;
+            opacity: 0.5;
+        }
+
+        .t-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .t-dot.on {
+            background: var(--theme);
+            transform: scale(1.5);
+        }
+
+        .t-dot.ok {
+            background: var(--theme);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body class="phase-1">
+
+    <div class="shorts">
+        <div id="video"></div>
+
+        <!-- Effects -->
+        <div class="tunnel-vision"></div>
+        <div class="heart-pulse"></div>
+        <div class="sound-status">🔊</div>
+
+        <!-- Progress -->
+        <div class="progress-wrap">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            <div class="progress-info">
+                <span id="current-num">1</span>/<span id="total-num">0</span>
+                <span>Shuffle Round <span id="round">1</span></span>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="status">View: <span id="watched">0</span> | Re: <span id="repeat">0</span></div>
+
+        <!-- Caption -->
+        <div class="ui-overlay">
+            <div class="caption" id="cap">
+                <div class="text" id="txt">กำลังโหลด...</div>
+            </div>
+        </div>
+
+        <!-- Start -->
+        <div id="start">
+            <div style="font-size:2.2rem; font-weight:700; color:var(--theme); margin-bottom:15px;">NeuroRecall</div>
+            <div style="font-size:0.8rem; color:#888; margin-bottom:20px;">Military Grade Hypnosis</div>
+            <div class="topic-list">
+                <ul id="topic-ul"></ul>
+                <div class="topic-count" id="topic-count"></div>
+            </div>
+            <button class="go" onclick="app.go()">เริ่มระบบย้อนจำ</button>
+        </div>
+
+        <!-- Subliminal -->
+        <div id="flash">
+            <div class="flash-w">จำ</div>
+        </div>
+
+        <!-- Void -->
+        <div id="void">
+            <div class="void-t">หายใจเข้าลึกๆ...</div>
+        </div>
+
+        <!-- Done -->
+        <div id="done">
+            <div style="font-size:4rem; margin-bottom:15px;">🧠</div>
+            <div style="font-size:1.4rem; color:var(--theme); font-weight:700; margin-bottom:5px;">
+                "ฝังข้อมูลลงสมองเรียบร้อย!"</div>
+            <div style="font-size:1rem; color:#888; margin-bottom:20px;">พระเจ้าไม่ทอดลูกเต๋ากับจักรวาล</div>
+            <div style="font-size:0.8rem; color:#555;">ดูทั้งหมด <span id="final-watched">0</span> ครั้ง | ทวนซ้ำ <span
+                    id="final-repeat">0</span> ครั้ง</div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline">
+            <div class="t-icon">🌍</div>
+            <div id="dots"></div>
+            <div class="t-icon">🧠</div>
+        </div>
+    </div>
+
+    <script>
+        // 🔊 AUDIO ENGINE - MILITARY GRADE ISOCHRONIC
+        const AudioEngine = {
+            ctx: null,
+            init() {
+                if (!window.AudioContext) return;
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+                // 1. Source: Low Base Tone
+                const osc = this.ctx.createOscillator();
+                osc.frequency.setValueAtTime(110, this.ctx.currentTime); // Deep hum
+
+                // 2. LFO: SQUARE WAVE (Isochronic - Hard Cut)
+                const lfo = this.ctx.createOscillator();
+                lfo.type = 'square'; // 🚁 HELICOPTER MODE: On/Off sharpness
+                lfo.frequency.value = 6;
+
+                const lfoGain = this.ctx.createGain();
+                lfoGain.gain.value = 1.0; // Full Modulation (0 to 1) for distinct Phwup Phwup
+                lfo.connect(lfoGain.gain);
+
+                // 3. Panner: 3D Rotate
+                const panner = this.ctx.createStereoPanner();
+                const panLfo = this.ctx.createOscillator();
+                panLfo.frequency.value = 0.1;
+                panLfo.connect(panner.pan);
+                panLfo.start();
+
+                // Chain: Osc -> PulseGain -> Panner -> Master -> Out
+                const pulseGain = this.ctx.createGain();
+                pulseGain.gain.value = 0.002; // Master Volume (Keep low generally)
+
+                // Hook up AM Synthesis: Osc -> (Gated by LFO) -> Panner
+                osc.connect(pulseGain);
+
+                // The magic: LFO controls the GAIN of pulseGain
+                // But we need a base value. If we connect LFO directly to gain, it oscillates around base.
+                // For Isochronic, we want 0 to Max.
+                // Let's create a dedicated Gain node for chopping.
+
+                const chopper = this.ctx.createGain();
+                chopper.gain.value = 0; // Default off, LFO turns it on
+                lfo.connect(chopper.gain);
+
+                osc.disconnect();
+                osc.connect(chopper);
+                chopper.connect(pulseGain);
+                pulseGain.connect(panner);
+                panner.connect(this.ctx.destination);
+
+                this.gainNode = pulseGain;
+
+                osc.start();
+                lfo.start();
+            },
+            stop() {
+                if (this.gainNode) {
+                    this.gainNode.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+                    setTimeout(() => { if (this.ctx.state !== 'closed') this.ctx.suspend(); }, 2100);
+                }
+            },
+            resume() {
+                if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+            }
+        };
+
+        // 📱 APP
+        const app = {
+            db: {},
+            queue: [],
+            original: [],
+            total: 0,
+            current: 0,
+            round: 1,
+            watched: 0,
+            repeat: 0,
+            viewDuration: 15000,
+            timer: null,
+            progressTimer: null,
+            currentInfo: null,
+            imprintTime: 0,
+            isImprinted: false,
+
+            async init() {
+                try {
+                    const r = await fetch('https://raw.githubusercontent.com/artnp/bigdata/refs/heads/main/reel1.js');
+                    const t = await r.text();
+                    const m = t.match(/\[([\s\S]*?)\];/);
+                    if (m) {
+                        (m[1].match(/"[^"]+"/g) || []).forEach(e => {
+                            const c = e.slice(1, -1), x = c.indexOf(',');
+                            if (x > -1) {
+                                const raw = c.substring(0, x), desc = c.substring(x + 1).trim();
+                                this.db[raw.split('?')[0]] = { raw, desc, views: 0 };
+                            }
+                        });
+                    }
+                } catch (e) { }
+                this.load();
+            },
+
+            load() {
+                const v = new URLSearchParams(location.search).get('v');
+                if (v) {
+                    this.original = v.split(',').filter(x => x);
+                    this.queue = [...this.original];
+                    this.total = this.queue.length;
+                    this.updateTotal(this.total);
+
+                    const ul = document.getElementById('topic-ul');
+                    ul.innerHTML = '';
+                    this.original.forEach((id, idx) => {
+                        const info = this.db[id.split('?')[0]];
+                        if (info) {
+                            const li = document.createElement('li');
+                            li.textContent = `${idx + 1}. ${info.desc}`;
+                            ul.appendChild(li);
+                        }
+                    });
+                    document.getElementById('topic-count').textContent = `รวม ${this.total} รายการ`;
+
+                    const f = this.db[this.queue[0].split('?')[0]];
+                    if (f) this.embed(f.raw, false);
+                }
+            },
+
+            shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            },
+
+            go() {
+                // 🚑 FIX: Ensure Audio Starts
+                if (AudioEngine.ctx && AudioEngine.ctx.state === 'suspended') AudioEngine.ctx.resume();
+                else AudioEngine.init();
+
+                document.getElementById('start').style.display = 'none';
+                this.setPhase(1);
+                this.queue = this.shuffle([...this.original]);
+                this.next();
+            },
+
+            setPhase(r) {
+                document.body.className = '';
+                // Phase Color Logic
+                if (r === 1) document.body.classList.add('phase-1');
+                else if (r === 2) document.body.classList.add('phase-2');
+                else document.body.classList.add('phase-3');
+            },
+
+            updateTotal(n) { document.getElementById('total-num').textContent = n; },
+            updateDots() {
+                const d = document.getElementById('dots');
+                d.innerHTML = '';
+                for (let i = 0; i < 5; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 't-dot';
+                    if (i < (this.current % 5)) dot.classList.add('ok');
+                    d.appendChild(dot);
+                }
+            },
+
+            next() {
+                if (this.queue.length === 0) {
+                    const needRepeat = this.original.filter(id => {
+                        const info = this.db[id.split('?')[0]];
+                        return info && info.views < 3;
+                    });
+
+                    if (needRepeat.length > 0 && this.round < 5) {
+                        this.round++;
+                        this.setPhase(this.round);
+                        this.queue = this.shuffle([...needRepeat]);
+                        this.current = 0;
+                        this.updateTotal(this.queue.length);
+                        document.getElementById('round').textContent = this.round;
+                        this.voidBreak();
+                        return;
+                    }
+                    this.finish();
+                    return;
+                }
+
+                // Reset UI
+                document.querySelector('.shorts').classList.remove('imprint');
+                this.imprintTime = 4000 + Math.random() * 8000;
+                this.isImprinted = false;
+
+                const fl = document.getElementById('flash');
+                fl.style.opacity = '0.4';
+                setTimeout(() => fl.style.opacity = '0', 40);
+
+                const id = this.queue[0];
+                const info = this.db[id.split('?')[0]] || { raw: id, desc: '...', views: 0 };
+                this.currentInfo = info;
+
+                const startTime = info.views * 15;
+                this.embed(info.raw, true, startTime);
+                document.getElementById('current-num').textContent = this.current + 1;
+
+                const cap = document.getElementById('cap');
+                const txt = document.getElementById('txt');
+                cap.classList.remove('show');
+
+                // 😵 CONFUSIONAL INDUCTION (PERMANENT BLUR CENSOR)
+                // Round 1: Clear
+                // Round 2+: Censor 40%
+                setTimeout(() => {
+                    txt.style.fontFamily = 'Sarabun';
+                    txt.innerHTML = this.proc(info.desc, this.round > 1 ? 0.4 : 0);
+                    cap.classList.add('show');
+                }, 300);
+
+                this.updateDots();
+                this.startProgress();
+            },
+
+            // Censor function merged into proc below
+
+            embed(raw, auto, startTime = 0) {
+                const [vid] = raw.split('?');
+                let s = startTime;
+                if (raw.includes('start=') && startTime === 0) {
+                    s = raw.split('start=')[1];
+                }
+                const a = auto ? 1 : 0;
+                document.getElementById('video').innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=${a}&start=${s}&controls=0&loop=1&playlist=${vid}&playsinline=1&modestbranding=1&rel=0&mute=0" allow="autoplay"></iframe>`;
+            },
+
+            proc(t, censorRate = 0) {
+                if (!t) return "";
+                const colors = ['#ff8787', '#ffc9c9', '#69db7c', '#74c0fc', '#da77f2'];
+
+                const w = t.split(' ');
+                return w.map((x, i) => {
+                    // Censor Chance (Blur)
+                    if (Math.random() < censorRate) {
+                        // 🌫️ RELIABLE BLUR: Transparent text + Shadow
+                        return `<span style="color:transparent; text-shadow:0 0 8px rgba(255,255,255,0.8); user-select:none;">${x}</span>`;
+                    }
+
+                    // Normal Rainbow Bionic
+                    const m = Math.ceil(x.length / 2);
+                    const bionic = `<span style="font-weight:700; opacity:1;">${x.slice(0, m)}</span><span style="opacity:0.85;">${x.slice(m)}</span>`;
+                    const c = colors[i % colors.length];
+                    return `<span style="color:${c}; text-shadow:0 0 10px ${c}30;">${bionic}</span>`;
+                }).join(' ');
+            },
+            startProgress() {
+                let elapsed = 0;
+                const interval = 100;
+                document.getElementById('progress').style.width = '0%';
+
+                this.progressTimer = setInterval(() => {
+                    elapsed += interval;
+                    const pct = (elapsed / this.viewDuration) * 100;
+                    document.getElementById('progress').style.width = pct + '%';
+
+                    if (!this.isImprinted && elapsed >= this.imprintTime) {
+                        this.isImprinted = true;
+                        document.querySelector('.shorts').classList.add('imprint');
+                    }
+
+                    if (elapsed >= this.viewDuration) {
+                        this.advance();
+                    }
+                }, interval);
+            },
+
+            advance() {
+                clearInterval(this.progressTimer);
+                document.querySelector('.shorts').classList.remove('imprint');
+
+                this.queue.shift();
+                if (this.currentInfo) {
+                    this.currentInfo.views++;
+                    if (this.currentInfo.views === 1) this.watched++;
+                    else this.repeat++;
+                }
+
+                this.current++;
+                document.getElementById('watched').textContent = this.watched;
+                document.getElementById('repeat').textContent = this.repeat;
+
+                setTimeout(() => this.next(), 600);
+            },
+
+            voidBreak() {
+                const v = document.querySelector('#void .void-t');
+                const voidEl = document.getElementById('void');
+
+                // 1. INHALE (0-4.5s)
+                v.innerHTML = `<div style="font-size:1.5rem; color:#888;">หายใจเข้า... <span style="opacity:0; animation: fadeUp 2s forwards 0.5s; color:#69db7c; font-weight:bold;">ลึกๆ</span></div>`;
+
+                // Sudden Cut
+                voidEl.style.transition = 'none';
+                voidEl.style.opacity = '1';
+                document.getElementById('video').style.opacity = '0';
+
+                // 2. EXHALE (4.5s)
+                setTimeout(() => {
+                    v.innerHTML = `<div style="font-size:1.5rem; color:#888;">หายใจออก... <span style="display:inline-block; opacity:0; animation: expand 3s forwards; color:#74c0fc; font-weight:bold;">ยาวววววๆ</span></div>`;
+                }, 4500);
+
+                // END (9s)
+                setTimeout(() => {
+                    voidEl.style.opacity = '0';
+                    document.getElementById('video').style.opacity = '1';
+                    this.next();
+                }, 9000);
+            },
+
+            embed(raw, auto, startTime = 0) {
+                const [vid] = raw.split('?');
+                let s = startTime;
+                if (raw.includes('start=') && startTime === 0) {
+                    s = raw.split('start=')[1];
+                }
+                const a = auto ? 1 : 0;
+                document.getElementById('video').innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=${a}&start=${s}&controls=0&loop=1&playlist=${vid}&playsinline=1&modestbranding=1&rel=0&mute=0" allow="autoplay"></iframe>`;
+            },
+
+            proc(t) {
+                if (!t) return "";
+                const colors = ['#ff8787', '#ffc9c9', '#69db7c', '#74c0fc', '#da77f2'];
+                const w = t.split(' ');
+                return w.map((x, i) => {
+                    const m = Math.ceil(x.length / 2);
+                    const bionic = `<span style="font-weight:700; opacity:1;">${x.slice(0, m)}</span><span style="opacity:0.85;">${x.slice(m)}</span>`;
+                    const c = colors[i % colors.length];
+                    return `<span style="color:${c}; text-shadow:0 0 10px ${c}30;">${bionic}</span>`;
+                }).join(' ');
+            },
+
+            finish() {
+                clearInterval(this.progressTimer);
+                document.getElementById('video').innerHTML = '';
+                document.getElementById('final-watched').textContent = this.watched;
+                document.getElementById('final-repeat').textContent = this.repeat;
+                document.getElementById('done').style.display = 'flex';
+                AudioEngine.stop();
+            }
+        };
+
+        window.onload = () => app.init();
+    </script>
+</body>
+
+</html>
