@@ -582,16 +582,48 @@
         }
 
         /* DONE */
+        /* DONE */
+        /* DONE */
         #done {
-            position: absolute;
+            position: fixed;
+            /* Force full viewport coverage */
             inset: 0;
             background: #000;
-            z-index: 1000;
+            /* Dark theme to match app */
+            z-index: 10000;
+            /* Higher z-index */
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
+        }
+
+        .gold-pop {
+            background: linear-gradient(to bottom, #ffd700, #ffa500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem !important;
+            font-weight: 800 !important;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+            animation: popBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @keyframes popBounce {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            70% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         /* TIMELINE */
@@ -706,7 +738,7 @@
         <!-- Done -->
         <div id="done">
             <div style="font-size:4rem; margin-bottom:15px;">🧠</div>
-            <div style="font-size:1.4rem; color:var(--theme); font-weight:700; margin-bottom:5px;">
+            <div class="gold-pop">
                 "ฝังข้อมูลลงสมองเรียบร้อย!"</div>
             <div id="final-quote" style="font-size:1.2rem; color:#888; margin-bottom:20px; min-height: 1.5em;"></div>
             <div style="font-size:0.8rem; color:#555;">ดูทั้งหมด <span id="final-watched">0</span> ครั้ง | ทวนซ้ำ <span
@@ -1175,18 +1207,51 @@
                 const doneEl = document.getElementById('done');
                 doneEl.style.display = 'flex';
 
-                // 🧠 FINAL REVELATION: Inner Voice Effect
+                // 🧠 FINAL REVELATION: Character by Character
                 const quoteEl = document.getElementById('final-quote');
-                const quoteText = "พระเจ้าไม่ทอดลูกเต๋ากับจักรวาล"; // Einstein's Quote
+                const quoteText = "พระเจ้าไม่ทอดลูกเต๋ากับจักรวาล";
 
-                // Reuse existing logic, but manually pass the element
-                // We create a fake 'cap' object that mimics classList.add to satisfy the function
-                const fakeCap = { classList: { add: () => { } } };
-
-                // Start revealing
-                this.rapidSequentialRead(quoteText, quoteEl, fakeCap);
+                this.charReveal(quoteText, quoteEl);
 
                 AudioEngine.stop();
+            },
+
+            // ✨ CHARACTER REVEAL: Inner Voice per Char
+            charReveal(text, el) {
+                const chars = text.split('');
+                // Prepare blurred placeholders
+                el.innerHTML = chars.map(c =>
+                    `<span style="display:inline-block; color:transparent; text-shadow:0 0 5px rgba(255,255,255,0.3); transition:all 0.3s; margin-right:1px;">${c}</span>`
+                ).join('');
+
+                let i = 0;
+                const speed = 150; // ms per char
+
+                const reveal = () => {
+                    if (i >= chars.length) {
+                        // Done: clear shadows for clean look
+                        Array.from(el.children).forEach(span => {
+                            span.style.textShadow = '0 0 10px rgba(105, 219, 124, 0.4)';
+                            span.style.color = '#69db7c';
+                            span.style.opacity = '1';
+                        });
+                        return;
+                    }
+
+                    const span = el.children[i];
+                    // POP Animation
+                    span.style.color = '#69db7c'; // Green theme
+                    span.style.textShadow = '0 0 20px #69db7c, 0 0 10px white';
+                    span.style.animation = 'thoughtReveal 0.5s ease-out forwards';
+
+                    // Slight scale pop (inline style override animation if needed, but animation handles scale)
+                    // Animation has scale(1.3) -> scale(1.1)
+
+                    i++;
+                    setTimeout(reveal, speed);
+                };
+
+                setTimeout(reveal, 1000); // Start delay
             }
         };
 
