@@ -436,6 +436,21 @@
             }
         }
 
+        /* 💭 INNER VOICE POP */
+        @keyframes thoughtReveal {
+            0% {
+                opacity: 0;
+                transform: scale(1.3) translateY(5px);
+                filter: blur(8px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.1);
+                filter: blur(0);
+            }
+        }
+
         @keyframes floatParticles {
 
             0%,
@@ -779,7 +794,7 @@
             original: [],
             total: 0,
             current: 0,
-            round: 1,
+            round: 3, // Force Round 3 to test reveal effect
             watched: 0,
             repeat: 0,
             viewDuration: 15000,
@@ -796,6 +811,10 @@
             watchHistory: [],
 
             async init() {
+                // Manually add specific test item
+                const testId = "dQw4w9WgXcQ"; // Placeholder ID
+                this.db[testId] = { raw: testId, desc: "พระเจ้าไม่ทอดลูกเต๋ากับจักรวาล", views: 2, totalWatchTime: 30000 };
+
                 try {
                     const r = await fetch('https://raw.githubusercontent.com/artnp/bigdata/refs/heads/main/reel1.js');
                     const t = await r.text();
@@ -810,32 +829,37 @@
                         });
                     }
                 } catch (e) { }
-                this.load();
+
+                // Add test item to original list if not present
+                this.load(testId);
             },
 
-            load() {
+            load(forcedId) {
                 const v = new URLSearchParams(location.search).get('v');
                 if (v) {
                     this.original = v.split(',').filter(x => x);
-                    this.queue = [...this.original];
-                    this.total = this.queue.length;
-                    this.updateTotal(this.total);
-
-                    const ul = document.getElementById('topic-ul');
-                    ul.innerHTML = '';
-                    this.original.forEach((id, idx) => {
-                        const info = this.db[id.split('?')[0]];
-                        if (info) {
-                            const li = document.createElement('li');
-                            li.textContent = `${idx + 1}. ${info.desc}`;
-                            ul.appendChild(li);
-                        }
-                    });
-                    document.getElementById('topic-count').textContent = `รวม ${this.total} รายการ`;
-
-                    const f = this.db[this.queue[0].split('?')[0]];
-                    if (f) this.embed(f.raw, false);
+                } else if (forcedId) {
+                    this.original = [forcedId];
                 }
+
+                this.queue = [...this.original];
+                this.total = this.queue.length;
+                this.updateTotal(this.total);
+
+                const ul = document.getElementById('topic-ul');
+                ul.innerHTML = '';
+                this.original.forEach((id, idx) => {
+                    const info = this.db[id.split('?')[0]];
+                    if (info) {
+                        const li = document.createElement('li');
+                        li.textContent = `${idx + 1}. ${info.desc}`;
+                        ul.appendChild(li);
+                    }
+                });
+                document.getElementById('topic-count').textContent = `รวม ${this.total} รายการ`;
+
+                const f = this.db[this.queue[0].split('?')[0]];
+                if (f) this.embed(f.raw, false);
             },
 
             shuffle(array) {
@@ -979,11 +1003,11 @@
                         const bionic = `<span style="font-weight:700;">${word.slice(0, m)}</span><span style="opacity:0.85;">${word.slice(m)}</span>`;
 
                         if (i < revealedCount) {
-                            // Already revealed: VISIBLE with color
-                            return `<span style="color:${color}; text-shadow:0 0 10px ${color}60;">${bionic}</span>`;
+                            // Already revealed: VISIBLE with color (slightly faded for focus flow)
+                            return `<span style="color:${color}; text-shadow:0 0 10px ${color}60; opacity:0.9;">${bionic}</span>`;
                         } else if (i === revealedCount) {
-                            // Currently revealing: HIGHLIGHTED
-                            return `<span style="color:${color}; text-shadow:0 0 20px ${color}; font-size:1.1em;">${bionic}</span>`;
+                            // Currently revealing: INNER VOICE POP!
+                            return `<span style="display:inline-block; color:${color}; text-shadow:0 0 25px ${color}, 0 0 10px white; font-size:1.15em; animation: thoughtReveal 0.4s ease-out forwards;">${bionic}</span>`;
                         } else {
                             // Not yet revealed: BLURRED
                             return `<span style="color:transparent; text-shadow:0 0 6px rgba(255,255,255,0.5);">${word}</span>`;
