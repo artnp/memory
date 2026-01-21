@@ -1225,33 +1225,33 @@
                 ).join('');
 
                 let i = 0;
-                const speed = 150; // ms per char
+                const speed = 29; // Extremely fast sweep
 
                 const reveal = () => {
                     if (i >= chars.length) {
-                        // Done: clear shadows for clean look
-                        Array.from(el.children).forEach(span => {
-                            span.style.textShadow = '0 0 10px rgba(105, 219, 124, 0.4)';
-                            span.style.color = '#69db7c';
-                            span.style.opacity = '1';
-                        });
                         return;
                     }
 
                     const span = el.children[i];
-                    // POP Animation
-                    span.style.color = '#69db7c'; // Green theme
-                    span.style.textShadow = '0 0 20px #69db7c, 0 0 10px white';
-                    span.style.animation = 'thoughtReveal 0.5s ease-out forwards';
 
-                    // Slight scale pop (inline style override animation if needed, but animation handles scale)
-                    // Animation has scale(1.3) -> scale(1.1)
+                    // ⚡ INSTANT RUN EFFECT (No Animation Frame blinking)
+                    span.style.transition = 'all 0.1s ease-out'; // Fast snap
+                    span.style.color = '#69db7c';
+                    span.style.textShadow = '0 0 15px #69db7c, 0 0 5px white';
+                    span.style.transform = 'scale(1.2)'; // Slight pump
+                    span.style.opacity = '1';
+
+                    // Return to normal size quickly
+                    setTimeout(() => {
+                        span.style.transform = 'scale(1)';
+                        span.style.textShadow = '0 0 10px rgba(105, 219, 124, 0.4)';
+                    }, 200);
 
                     i++;
                     setTimeout(reveal, speed);
                 };
 
-                setTimeout(reveal, 1000); // Start delay
+                setTimeout(reveal, 100); // Start IMMEDIATELY
             }
         };
 
